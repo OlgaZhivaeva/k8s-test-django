@@ -75,3 +75,22 @@ $ docker compose build web
 `ALLOWED_HOSTS` -- настройка Django со списком разрешённых адресов. Если запрос прилетит на другой адрес, то сайт ответит ошибкой 400. Можно перечислить несколько адресов через запятую, например `127.0.0.1,192.168.0.1,site.test`. [Документация Django](https://docs.djangoproject.com/en/3.2/ref/settings/#allowed-hosts).
 
 `DATABASE_URL` -- адрес для подключения к базе данных PostgreSQL. Другие СУБД сайт не поддерживает. [Формат записи](https://github.com/jacobian/dj-database-url#url-schema).
+
+## Сщздание Secrets в кластере
+
+В директории `minikube` создайте файл `secrets.yaml` 
+
+```
+apiVersion: v1
+kind: Secret
+metadata:
+  name: django-secrets
+type: Opaque
+data:
+  DATABASE_URL: cG9zdGdyZXM6Ly90ZXN0X2s4czpPd090QmVwOUZydXRAMTkyLjE2OC4wLjM2OjU0MzIvdGVzdF9rOHM=
+  DEBUG: RkFMU0U=
+  SECRET_KEY: OWlpajY4NTdoa2xpdWl1dHJ5NjU3OTg3ODA5ODIzNHdlcnRmdj0tbnV0eWpnY3JlcjY1NDY3NnRndWtqYmhydDd0Zg==
+  ALLOWED_HOSTS: MTI3LjAuMC4xLGxvY2FsaG9zdCwxOTIuMTY4LjAuMzY=
+```
+Значения переменных окружения необходимо закодировать в base64.
+
