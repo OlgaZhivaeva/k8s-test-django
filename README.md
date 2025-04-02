@@ -76,7 +76,7 @@ $ docker compose build web
 
 `DATABASE_URL` -- адрес для подключения к базе данных PostgreSQL. Другие СУБД сайт не поддерживает. [Формат записи](https://github.com/jacobian/dj-database-url#url-schema).
 
-## Сщздание Secrets в кластере
+## Создание Secrets в кластере
 
 В директории `minikube` создайте файл `secrets.yaml` 
 
@@ -87,10 +87,10 @@ metadata:
   name: django-secrets
 type: Opaque
 data:
-  DATABASE_URL: cG9zdGdyZXM6Ly90ZXN0X2s4czpPd090QmVwOUZydXRAMTkyLjE2OC4wLjM2OjU0MzIvdGVzdF9rOHM=
-  DEBUG: RkFMU0U=
-  SECRET_KEY: OWlpajY4NTdoa2xpdWl1dHJ5NjU3OTg3ODA5ODIzNHdlcnRmdj0tbnV0eWpnY3JlcjY1NDY3NnRndWtqYmhydDd0Zg==
-  ALLOWED_HOSTS: MTI3LjAuMC4xLGxvY2FsaG9zdCwxOTIuMTY4LjAuMzY=
+  DATABASE_URL: Ссылка на базу данных
+  DEBUG: TRUE или FALSE
+  SECRET_KEY: Секретный кдюч приложения
+  ALLOWED_HOSTS: Список хостов/доменов
 ```
 Значения переменных окружения необходимо закодировать в base64.
 
