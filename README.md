@@ -76,7 +76,23 @@ $ docker compose build web
 
 `DATABASE_URL` -- адрес для подключения к базе данных PostgreSQL. Другие СУБД сайт не поддерживает. [Формат записи](https://github.com/jacobian/dj-database-url#url-schema).
 
-## Создание Secrets в кластере
+
+## Разверните приложение в Minikube
+
+Установите [Minikube](https://minikube.sigs.k8s.io/docs/start/?arch=%2Fwindows%2Fx86-64%2Fstable%2F.exe+download) и [kubectl](https://kubernetes.io/ru/docs/tasks/tools/install-kubectl/)
+
+Запустите кластер minikrube командой
+```shell
+minikube start
+```
+### Загрузите образ Джанго приложения в кластер
+
+Для этого перейдите в директорию в которой находится DockerFile `k8s-test-django/backend_main_django` и выполните команду
+```shell
+minikube image build -t django_app .
+```
+
+### Создание Secrets в кластере
 
 В директории `minikube` создайте файл `secrets.yaml` 
 
@@ -93,4 +109,69 @@ data:
   ALLOWED_HOSTS: Список хостов/доменов
 ```
 Значения переменных окружения необходимо закодировать в base64.
+Пример кодирования
+```shell
+echo -n "FALSE" | base64
+```
+Раскодировать можно командой
+```shell
+echo RkFMU0U= | base64
+```
 
+### Разверните приложение в кластере
+
+Перейдите в директорию где находятся файлы с манифестами `k8s-test-django/minikube` и выполните команды
+```shell
+kubectl apply -f secrets.yaml
+kubectl apply -f deployment.yaml
+kubectl apply -f service.yaml
+```
+
+### Настройте Ingress
+
+Подключите Ingress контроллер Nginx
+```shell
+minikube addons enable ingress
+```
+Создайте службу ingress командой
+```shell
+kubectl apply -f ingress.yaml
+```
+
+Получите IP адрес кластера minikube выполнив команду
+```shell
+minikube ip
+```
+Отредактируйте файл /etc/hosts на вашем компьютере, добавив в конец строку
+<IP адрес кластера minikube> star-burger.test
+
+### Запустите регулярную задачу для удаления суссий джанго
+
+```shell
+kubectl apply -f django-clearsessions.yaml
+```
+Сессии будут удаляться первого числа каждого месяца.
+
+### Запустите задачу для применения миграций базы данных
+
+```shell
+kubectl apply -f django-migrate.yaml
+```
+
+## Создайте базу данных postgresql внутри кластера
+
+### Установите [Helm](https://helm.sh/)
+
+
+``` shell   
+helm repo add bitnami https://charts.bitnami.com/bitnami
+helm repo update
+```
+
+Установте приложение PostgreSQL в ваш Kubernetes кластер
+```shell
+helm install my-postgres bitnami/postgresql \
+  --set postgresqlUsername=test_k8s \
+  --set postgresqlPassword=OwOtBep9Frut \
+  --set postgresqlDatabase=test_k8s
+```

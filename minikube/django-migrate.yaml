@@ -8,7 +8,7 @@ spec:
       restartPolicy: Never
       containers:
       - name: django-migrate-container
-        image: django_app_image_name:tag
+        image: django_app:latest
         command: ["python3", "manage.py", "migrate", "--noinput"]
         envFrom:
         - secretRef:
