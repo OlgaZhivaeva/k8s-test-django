@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: psql-client
+  namespace: edu-naughty-cray
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: psql-client
+  template:
+    metadata:
+      labels:
+        app: psql-client
+    spec:
+      containers:
+      - name: psql
+        image: ubuntu:latest
+        command: ["/bin/bash", "-c", "sleep infinity"]
+        env:
+        - name: PGDSN
+          valueFrom:
+            secretKeyRef:
+              name: postgres
+              key: dsn
+        - name: PGHOST
+          valueFrom:
+            secretKeyRef:
+              name: postgres
+              key: host
+        - name: PGPORT
+          valueFrom:
+            secretKeyRef:
+              name: postgres
+              key: port
+        - name: PGUSER
+          valueFrom:
+            secretKeyRef:
+              name: postgres
+              key: username
+        - name: PGPASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: postgres
+              key: password
+        - name: PGDATABASE
+          valueFrom:
+            secretKeyRef:
+              name: postgres
+              key: name
+        volumeMounts:
+        - name: pg-root-cert
+          mountPath: /usr/local/share/ca-certificates/
+          readOnly: true
+      volumes:
+      - name: pg-root-cert
+        secret:
+          secretName: pg-root-cert
+          defaultMode: 384
