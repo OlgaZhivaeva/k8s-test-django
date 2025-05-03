@@ -115,7 +115,7 @@ echo -n "FALSE" | base64
 ```
 Раскодировать можно командой
 ```shell
-echo RkFMU0U= | base64
+echo RkFMU0U= | base64 -d
 ```
 
 ### Разверните приложение в кластере

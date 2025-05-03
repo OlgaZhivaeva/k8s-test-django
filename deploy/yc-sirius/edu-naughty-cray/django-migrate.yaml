@@ -1,0 +1,15 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: django-migrate-job
+spec:
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: django-migrate-container
+        image: django_app:latest
+        command: ["python3", "manage.py", "migrate", "--noinput"]
+        envFrom:
+        - secretRef:
+            name: django-secrets
